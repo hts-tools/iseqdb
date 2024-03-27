@@ -111,10 +111,13 @@ Output delimiter: comma, semicolon, tab; default=comma
 
 ###### example:
 
-ISeqDb find_nucl \
-/inputdir/file_nucleotite.fna \
-/archdir/mcyE.tar.gz \
-/outdir/ISeqDb_output.txt \
+ISeqDb find_nucl ``\``
+
+/inputdir/file_nucleotite.fna ``\``
+
+/archdir/mcyE.tar.gz ``\``
+/outdir/ISeqDb_output.txt ``\``
+
 -k "megablast" -p 95 -e 1e-16 -t 8 -d "tab" -s "pident"
 
 #### inspect_db
@@ -132,8 +135,10 @@ Output directory (with path) - e.g. /dir/; if not indicated, default=nosave
 
 ###### example:
 
-ISeqDb inspect_db \
-/archdir/mcyB.tar.gz \
+ISeqDb inspect_db ``\``
+
+/archdir/mcyB.tar.gz ``\``
+
 -d /outdir/
 
 #### create_db
@@ -151,8 +156,10 @@ Molecule type in fasta file, nucl (nucleotide) or prot (protein)
 
 ###### example:
 
-ISeqDb create_db \
-/inputdir/geneseq.fna \
+ISeqDb create_db ``\``
+
+/inputdir/geneseq.fna ``\``
+
 -m "nucl"
 
 
