@@ -116,6 +116,7 @@ ISeqDb find_nucl ``\``
 /inputdir/file_nucleotite.fna ``\``
 
 /archdir/mcyE.tar.gz ``\``
+
 /outdir/ISeqDb_output.txt ``\``
 
 -k "megablast" -p 95 -e 1e-16 -t 8 -d "tab" -s "pident"
