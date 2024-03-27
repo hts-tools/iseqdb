@@ -1,14 +1,13 @@
-﻿## **ISeqDb** - Identify Sequences in Databases
+##**ISeqDb** - Identify Sequences in Databases
 
-Screening of query sequences for the presence of specific target genes.
+Screening of query dna sequences for the presence of specific target genes or proteins.
 
-*Query sequences* can be genomes, MAGs, contigs/scaffolds, multifasta and fasta files. Typically, *databases* contain multifasta homologous sequences.
+*Query sequences* can be metagenome assembles genomes (MAGs), contigs/scaffolds, multifasta and fasta files. Typically, *databases* contain multifasta homologous sequences. Databases are queried using megablast, blastn and blastx.
 
-ISeqDd was tested to search for target genes in bacterial MAGs. ISeqDb was written primarily to search for the presence of genes encoding cyanotoxins and other genes encoding metabolites hazardous to human health in cyanobacterial MAGs. Currently available databases include DNA sequences of genes encoding microcystins (*mcyB*, *mcyD*, *mcyE*), anatoxins (*anaC*, *anaF*) and geosmin.
+ISeqDd was tested to search for target genes or proteins in bacterial MAGs. ISeqDb was written primarily to search for the presence of genes encoding cyanotoxins and other genes encoding metabolites hazardous to human health in cyanobacterial MAGs. Currently available databases include DNA sequences of genes encoding microcystins (*mcyB*, *mcyD*, *mcyE*), anatoxins (*anaC*, *anaF*) and geosmin (*geoA*).
 
-Any other database of homologous sequences can be used. This includes, for example, the *rbcL* gene used to classify diatoms.
+Any other database of homologous sequences can be used. This includes, for example, the *rbcL* gene used to classify diatoms (included). Additional nucleotide or protein databases may be created using the *create_db* module.
 
-At present, only DNA sequences are supported.
 
 ## Installation
 
@@ -18,89 +17,134 @@ python>=3.10, pandas, blast>=2.15, pip
 
 conda/mamba should be already installed (https://mamba.readthedocs.io/en/latest/)
 
-### Conda and pip
+### conda and pip
 
 - Install dependencies creating a conda environment (through conda or mamba)
 
-*mamba create -y --name ISeqDb python>=3.10*
+*mamba create --name ISeqDb python>=3.10*
 
 *mamba activate ISeqDb*
 
-*mamba install -y -c bioconda -c conda-forge python>=3.10 pandas blast>=2.15 pip*
+*mamba install -c bioconda -c conda-forge python>=3.10 pandas blast>=2.15 pip*
 
 - Install ISeqDb
 
 *pip install ISeqDb*
 
-### Usage
+## Basic usage
 
-*ISeqDb path_to/queryfile.fasta path_to/targetdatabase.tar.gz path_to/outputfile.txt*
+ISeqDb has three modules:
 
-### Arguments
+**find_nucl**: Identify sequences in databases using megablast, blastn or blastx
+*ISeqDb find_nucl /path_to/queryfile.fasta /path_to/targetdatabase.tar.gz /path_to/outputfile.txt*
 
-#### positional arguments
+**inspect_db**: Inspect or save the sequence database
+*ISeqDb inspect_db /path_to/arch.tar.gz*  -- (inspect database)
+*ISeqDb inspect_db /path_to/arch.tar.gz -d /outdir* -- (inspect and save a copy arch.fasta)
 
-queryfile: query file, fasta/multi-fasta format
+**create_db**: Create a database from a fasta/multifasta file using makeblast
+*ISeqDb create_db /path_to/arch.fasta -m "nucl"* -- (nucleotide archives)
+*ISeqDb create_db /path_to/arch.fasta -m "prot"* -- (protein archives)
 
-targetdatabase: Target database for the blast analysis
 
-outputfile: Output name text file
+## Usage
 
-#### options:
-  -h, --help: show this help message and exit
+#####**find_nucl**
 
-  -p MINPIDENT, --minpident MINPIDENT; Keep hits with pident >= minpident; default=85
+######positional arguments:
 
-  -k {megablast,blastn}, --task {megablast,blastn} Task: megablast, blastn, default=megablast
+*queryfile*             Input query file fasta/multi-fasta (with path) - e.g. /dir/query.fna
 
-  -m MAXTARGSEQ, --maxtargseq MAXTARGSEQ Keep max target sequences >= maxtargseq; default=100
+*targetdb*              Target database for the blast analysis (with path) - e.g. /dir/arch.tar.gz
 
-  -e MINEVALUE, --minevalue MINEVALUE Keep hits with evalue >= minevalue; default=1e-6
+*outputfile*            Output name file (with path) - e.g. /dir/out.txt
 
-  -t THREADS, --threads THREADS Number of threads to use; default=1
+######options:
 
-  -s SORTOUTPUT, --sortoutput SORTOUTPUT Sort output by colname. eg.: bitscore, pident, alignment_length; default=bitscore
+-h, --help            show this help message and exit
 
-  -d {comma,semicolon,tab}, --delimiter {comma,semicolon,tab} Output delimiter: comma, semicolon, tab; default=comma
+-k {megablast,blastn,blastx}, --task {megablast,blastn,blastx}
+Task: megablast (nucl), blastn (nucl), blastx (prot); default=megablast
 
-  -v, --version: show program's version number and exit
+-m MAXTARGSEQ, --maxtargseq MAXTARGSEQ
+-Keep max target sequences >= maxtargseq; default=100
 
-### Output legend (in square brackets, the blast codes)
+-e MINEVALUE, --minevalue MINEVALUE
+Keep hits with evalue >= minevalue; default=1e-6
 
-   query_id:                    query/sequence identifier [qacc]
+-p MINPIDENT, --minpident MINPIDENT
+Keep hits with pident >= minpident (only megablast/blastn); default=85
 
-   subject_accession:           NCBI accession number or subject identifier in the database [sacc]
+-t THREADS, --threads THREADS
+Number of threads to use; default=1
 
-   pident:                      percentage of identical matches in query and subject sequences [pident]
+-s SORTOUTPUT, --sortoutput SORTOUTPUT
+Sort output by colname. eg.: bitscore, pident, alignment_length; default=bitscore
 
-   n_ident_match:               number of identical bases/matches [nident]
+-d {comma,semicolon,tab}, --delimiter {comma,semicolon,tab}
+Output delimiter: comma, semicolon, tab; default=comma
 
-   n_diff_match:                number of different bases/matches [mismatch]
+######Output legend (in square brackets, the blast codes)
 
-   n_gaps:                      total number of gaps [gaps]
+*query_id*:                    query/sequence identifier [qacc]
+*subject_accession*:           NCBI accession number or subject identifier in the database [sacc]
+*pident*:                      percentage of identical matches in query and subject sequences [pident]
+*n_ident_match*:               number of identical bases/matches [nident]
+*n_diff_match*:                number of different bases/matches [mismatch]
+*n_gaps*:                      total number of gaps [gaps]
+*alignment_length*:            length of the alignemnt between query and subject sequences [length]
+*query_start_al*:              start of alignment in query [qstart]
+*query_end_al*:                end of alignment in query [qend]
+*subj_start_al*:               start of alignment in subject [sstart]
+*subj_end_al*:                 end of alignment in subject [send]
+*bitscore*:                    bit score [bitscore]
+*evalue*:                      expect value [evalue]
+*subject_seq_title*:           title of subject sequence in database [stitle]
+*align_query_seq*:             aligned part of query sequence [qseq]
+*align_subj_seq*:              aligned part of subject sequence [sseq]
 
-   alignment_length:            length of the alignemnt between query and subject sequences [length]
+######example:
+ISeqDb find_nucl \
+/inputdir/file_nucleotite.fna \
+/archdir/mcyE.tar.gz \
+/outdir/ISeqDb_output.txt \
+-k "megablast" -p 95 -e 1e-16 -t 8 -d "tab" -s "pident"
 
-   query_start_al:              start of alignment in query [qstart]
+#####**inspect_db**
 
-   query_end_al:                end of alignment in query [qend]
+######positional arguments:
+*targetdb*              Target database (with path) - e.g. /dir/arch.tar.gz
 
-   subj_start_al:               start of alignment in subject [sstart]
+######options:
+-h, --help            show this help message and exit
 
-   subj_end_al:                 end of alignment in subject [send]
+-d SAVEDB, --savedb SAVEDB
+Output directory (with path) - e.g. /dir/; if not indicated, default=nosave
 
-   bitscore:                    bit score [bitscore]
+######example:
+ISeqDb inspect_db \
+/archdir/mcyB.tar.gz \
+-d /outdir/
 
-   evalue:                      expect value [evalue]
+#####**create_db**
 
-   subject_seq_title:           title of subject sequence in database [stitle]
+######positional arguments:
+*targetfasta*           Fasta file (with path) - e.g. /dir/arch.fasta
 
-   align_query_seq:             aligned part of query sequence [qseq]
+######options:
+-h, --help            show this help message and exit
 
-   align_subj_seq:              aligned part of subject sequence [sseq]
+-m {nucl,prot}, --moltype {nucl,prot}
+Molecule type in fasta file, nucl (nucleotide) or prot (protein)
+
+######example:
+ISeqDb create_db \
+/inputdir/geneseq.fna \
+-m "nucl"
+
 
 ___
-   ISeqDb relies on BLAST®:
+#####ISeqDb relies on BLAST®:
 
    -   BLAST® Command Line Applications User Manual [Internet]. Bethesda (MD): National Center
        for Biotechnology Information (US); 2008-.
