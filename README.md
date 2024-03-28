@@ -172,3 +172,8 @@ ___
    -   Camacho C., Coulouris G., Avagyan V., Ma N., Papadopoulos J., Bealer K., Madden T.L. (2008)
        “BLAST+: architecture and applications.” BMC Bioinformatics 10:421. PubMed
 
+___
+#### Acknowledgements
+
+HORIZON-MSCA-2021-SE-01, AlgaeNet4AV, Project ID 101086437
+
