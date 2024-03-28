@@ -22,11 +22,11 @@ conda/mamba should be already installed (https://mamba.readthedocs.io/en/latest/
 
 - Install dependencies creating a conda environment (through conda or mamba)
 
-*mamba create --name ISeqDb python>=3.10*
+*mamba create -y --name ISeqDb python>=3.10*
 
 *mamba activate ISeqDb*
 
-*mamba install -c bioconda -c conda-forge python>=3.10 pandas blast>=2.15 pip*
+*mamba install -y -c bioconda -c conda-forge python>=3.10 blast>=2.15 pip*
 
 - Install ISeqDb
 
