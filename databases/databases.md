@@ -1,6 +1,6 @@
 ### Available Databases
 
-All sequences were obtained from GenBank, and databases created using makeblastdb. For each category, only homologous target genes were included, i.e., gene clusters or genomes were excluded; to include complete (though non-targeted) hits, the obtained results (*align_query_seq*, from the ISeqDb output) should be blasted in NCBI.
+All sequences were obtained from GenBank, and databases created using _ISeqDb create_db_ (makeblastdb). For each category, only homologous target genes were included, i.e., gene clusters or genomes were excluded; to include complete (though non-targeted) hits, the obtained results (*align_query_seq*, from the ISeqDb output) should be blasted in NCBI.
 
 *mcyB_2403* (Cyanobacteria) [204-2888 bp]; 772 sequences [March 2024]
 
