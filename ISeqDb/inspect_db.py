@@ -1,5 +1,5 @@
 # ISeqDb - Identify Sequences in Databases
-# version 0.0.3
+# version 0.0.5
 # module inspect_db
 # Nico Salmaso, FEM, nico.salmaso@fmach.it
 
@@ -10,33 +10,42 @@ import sys
 
 def run(args):
 
+    # ##############################################
+    # check if the database has the correct extension
+    if args.targetdb_inspect.endswith('.tar.gz'):
+        print("db ext pass")
+    else:
+        print(f"{args.targetdb_inspect} does not have a valid file extension .tar.gz")
+        sys.exit(1)
+    # ##############################################
+
     print('_____________________________________')
     print(' ')
-    print("Database:", args.targetdb)
+    print("Database:", args.targetdb_inspect)
     print('')
     print('_____________________________________')
     print(' ')
 
-    dirtarget, file_name_db = os.path.split(args.targetdb)
+    dirtarget, file_name_db = os.path.split(args.targetdb_inspect)
     if len(dirtarget) == 0:
         print(" ")
         print("db directory not indicated")
         print(" ")
-        sys.exit()
+        sys.exit(1)
     if len(file_name_db) == 0:
         print(" ")
         print("database.tar.gz name not indicated")
         print(" ")
-        sys.exit()
+        sys.exit(1)
 
     # open and extract database
-    datseqtar = tarfile.open(args.targetdb)
+    datseqtar = tarfile.open(args.targetdb_inspect)
     # extracting file
     datseqtar.extractall(dirtarget)
     datseqtar.close()
 
     # remove extensions
-    datseq = args.targetdb.split('.')[0]
+    datseq = args.targetdb_inspect.split('.')[0]
     datseq_name = file_name_db.split('.')[0]
 
     define_cmd_1: str = (
@@ -72,7 +81,7 @@ def run(args):
     else:
         print(" ")
         print("unidentified molecule")
-        sys.exit()
+        sys.exit(1)
     os.remove("".join([datseq, chartask, 'db']))
     os.remove("".join([datseq, chartask, 'hr']))
     os.remove("".join([datseq, chartask, 'in']))

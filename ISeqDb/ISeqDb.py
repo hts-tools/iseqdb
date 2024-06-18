@@ -1,20 +1,29 @@
 #!/usr/bin/env python
 
 # ISeqDb - Identify Sequences in Databases
-# version 0.0.3
+# version 0.0.5
 # main module
 # Nico Salmaso, FEM, nico.salmaso@fmach.it
 
 import argparse
 import sys
 import textwrap
+import os
 
-from ISeqDb import find_nucl, inspect_db, create_db
+from ISeqDb import find_seqs, inspect_db, create_db
 
 
 def main():
-    version_isdb = "0.0.3"
+    version_isdb = "0.0.5"
     description = ("ISeqDb v." + version_isdb)
+
+    def check_path_file(filepathname):
+        if not os.path.exists(filepathname):
+            raise argparse.ArgumentTypeError(f"The file {filepathname} does not exist; "
+                                             f"both path and filename must be indicated, "
+                                             f"e.g. /path/file.fna, /path/database.tar.gz ")
+        return filepathname
+
     parser = argparse.ArgumentParser(prog='ISeqDb', description=description,
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      epilog=textwrap.dedent('''\
@@ -29,13 +38,13 @@ def main():
                 ---
                 ''')
                                      )
-    parser.add_argument('-v', '-V', '--version', action='version', version='%(prog)s 0.0.3')
+    parser.add_argument('-v', '-V', '--version', action='version', version='%(prog)s 0.0.5')
     subparsers = parser.add_subparsers(dest='command', title='commands',
                                        description='Available commands - Use "ISeqDb [command] --help"'
                                                    ' for more information about a command')
 
-    # find_nucl
-    parser_find_nucl = subparsers.add_parser('find_nucl', help='Identify sequences in databases',
+    # find_seqs
+    parser_find_seqs = subparsers.add_parser('find_seqs', help='Identify sequences in databases',
                                              formatter_class=argparse.RawDescriptionHelpFormatter,
                                              epilog=textwrap.dedent('''\
 
@@ -52,6 +61,8 @@ def main():
                 query_end_al:		end of alignment in query [qend]
                 subj_start_al:		start of alignment in subject [sstart]
                 subj_end_al:		        end of alignment in subject [send]
+                qlen:                        query sequence length
+                slen:                        subject sequence length
                 bitscore:			bit score [bitscore]
                 evalue:			expect value [evalue]
                 subject_seq_title:		title of subject sequence in database [stitle]
@@ -60,43 +71,43 @@ def main():
                 ---
              ''')
                                              )
-    parser_find_nucl.add_argument('queryfile', default=None,
-                                  help="Input query file fasta/multi-fasta (with path) - e.g. /dir/query.fna")
-    parser_find_nucl.add_argument('targetdb', default=None,
-                                  help="Target database for the blast analysis (with path) - e.g. /dir/arch.tar.gz")
-    parser_find_nucl.add_argument('outputfile', default=None,
+    parser_find_seqs.add_argument('queryfile', type=check_path_file, default=None,
+                                  help="path/file with extension .fasta .fas .fa .fna .ffn .faa; e.g. /dir/query.fasta")
+    parser_find_seqs.add_argument('targetdb', type=check_path_file, default=None,
+                                  help="Database for the blast analysis (with path) - e.g. /dir/arch.tar.gz")
+    parser_find_seqs.add_argument('outputfile', default=None,
                                   help="Output name file (with path) - e.g. /dir/out.txt")
-    parser_find_nucl.add_argument('-k', '--task', required=False, default="megablast",
+    parser_find_seqs.add_argument('-k', '--task', type=str, required=False, default="megablast",
                                   choices=['megablast', 'blastn', 'blastx'],
                                   help="Task: megablast (nucl), blastn (nucl), blastx (prot); default=megablast")
-    parser_find_nucl.add_argument('-m', '--maxtargseq', type=int, required=False, default=100,
+    parser_find_seqs.add_argument('-m', '--maxtargseq', type=int, required=False, default=100,
                                   help="Keep max target sequences >= maxtargseq; default=100")
-    parser_find_nucl.add_argument('-e', '--minevalue', type=float, required=False, default=1e-6,
+    parser_find_seqs.add_argument('-e', '--minevalue', type=float, required=False, default=1e-6,
                                   help="Keep hits with evalue >= minevalue; default=1e-6")
-    parser_find_nucl.add_argument('-p', '--minpident', type=int, required=False, default=85,
+    parser_find_seqs.add_argument('-p', '--minpident', type=int, required=False, default=85,
                                   help="Keep hits with pident >= minpident (only megablast/blastn); default=85")
-    parser_find_nucl.add_argument('-t', '--threads', type=int, required=False, default=1,
+    parser_find_seqs.add_argument('-t', '--threads', type=int, required=False, default=1,
                                   help="Number of threads to use; default=1")
-    parser_find_nucl.add_argument('-s', '--sortoutput', required=False, default="bitscore",
-                                  help="Sort output by colname. eg.: bitscore, pident, alignment_length; "
-                                       "default=bitscore")
-    parser_find_nucl.add_argument('-d', '--delimiter', required=False, default="comma",
+    parser_find_seqs.add_argument('-s', '--sortoutput', type=str, required=False, default="bitscore",
+                                  choices=['bitscore', 'pident', 'evalue', 'subject_seq_title'],
+                                  help="Sort output by colname; default=bitscore")
+    parser_find_seqs.add_argument('-d', '--delimiter', type=str, required=False, default="comma",
                                   choices=['comma', 'semicolon', 'tab'],
                                   help="Output delimiter: comma, semicolon, tab; default=comma")
-    parser_find_nucl.set_defaults(func=find_nucl.run)
+    parser_find_seqs.set_defaults(func=find_seqs.run)
 
     # inspect_db
     parser_inspect_db = subparsers.add_parser('inspect_db', help='Inspect or save the sequence database')
-    parser_inspect_db.add_argument('targetdb', default=None,
-                                   help="Target database (with path) - e.g. /dir/arch.tar.gz")
+    parser_inspect_db.add_argument('targetdb_inspect', type=check_path_file, default=None,
+                                   help="Database for the blast analysis (with path) - e.g. /dir/arch.tar.gz")
     parser_inspect_db.add_argument('-d', '--savedb', required=False, default="nosave",
                                    help="Output directory (with path) - e.g. /dir/; if not indicated, default=nosave")
     parser_inspect_db.set_defaults(func=inspect_db.run)
 
     # create_db
     parser_create_db = subparsers.add_parser('create_db', help='Create a database from a fasta/multifasta file')
-    parser_create_db.add_argument('targetfasta', default=None,
-                                  help="Fasta file (with path) - e.g. /dir/arch.fasta")
+    parser_create_db.add_argument('targetfasta', type=check_path_file, default=None,
+                                  help="path/file with extension .fasta .fas .fa .fna .ffn .faa); e.g. /dir/arch.fasta")
     parser_create_db.add_argument('-m', '--moltype', type=str, required=True, default=None, choices=['nucl', 'prot'],
                                   help="Molecule type in fasta file, nucl (nucleotide) or prot (protein)")
     parser_create_db.set_defaults(func=create_db.run)

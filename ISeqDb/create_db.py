@@ -1,5 +1,5 @@
 # ISeqDb - Identify Sequences in Databases
-# version 0.0.3
+# version 0.0.5
 # module, create_db
 # Nico Salmaso, FEM, nico.salmaso@fmach.it
 
@@ -19,17 +19,56 @@ def run(args):
     dirfasta, file_name_fs = os.path.split(args.targetfasta)
     datseq = file_name_fs.split('.')[0]
 
-    if (len(dirfasta) == 0) or (len(file_name_fs) == 0):
-        print("The fasta name with the full path should be provided - e.g. '/inputdir/inp.fasta'")
+    if len(dirfasta) == 0:
         print(" ")
-        sys.exit()
+        print("input directory not indicated")
+        print(" ")
+        sys.exit(1)
+    if len(file_name_fs) == 0:
+        print(" ")
+        print("fasta file name not indicated")
+        print(" ")
+        sys.exit(1)
+
+    # ##############################################
+    # check if the query file has the correct extensions
+    file_exte = ['.fasta', '.fas', '.fa', '.fna', '.ffn', '.faa']
+    exte = os.path.splitext(args.targetfasta)[1]
+    if exte.lower() in file_exte:
+        print("fasta ext pass")
+    else:
+        print(f"{args.targetfasta} does not have a valid file extension .fasta .fas .fa .fna .ffn .faa")
+        sys.exit(1)
+
+    # check if the query file begins with > (greater-than)
+    def check_char_1(filename):
+        try:
+            with open(filename, 'r') as file:
+                char_1 = file.read(1)
+                return char_1 == '>'
+        except FileNotFoundError:
+            print(f"{filename} does not exist")
+            return False
+        except UnicodeDecodeError:
+            print("")
+            print(f"{filename} is binary or contains invalid data")
+            sys.exit(1)
+
+    if check_char_1(args.targetfasta):
+        print("ch_1 pass")
+    else:
+        print("")
+        print(f"{args.targetfasta}: line 1 is not compatible with the structure of a fasta file")
+        sys.exit(1)
+
+    # ##############################################
 
     outdir = os.path.join(str(dirfasta), str(datseq) + '_out')
 
     if os.path.isdir(outdir):
         print("Cannot write an existing directory: ", outdir)
         print(" ")
-        sys.exit()
+        sys.exit(1)
     else:
         os.mkdir(outdir)
 
@@ -45,8 +84,8 @@ def run(args):
         chartask = ".p"
     else:
         print(" ")
-        print("allowed moltype are nucl (nucleotydes) or prot (proteins)")
-        sys.exit()
+        print("allowed moltype are nucl (nucleotides) or prot (proteins)")
+        sys.exit(1)
 
     elements_db = [
         ("".join([datseq, chartask, 'db'])),
