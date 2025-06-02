@@ -28,7 +28,7 @@ conda/mamba should be already installed (https://mamba.readthedocs.io/en/latest/
 
 *mamba install -y python>=3.10 pip*
 
-*mamba install -y blast>=2.15.0*
+*mamba install -y bioconda::blast>=2.15.0*
 
 - Install ISeqDb from PyPI
 
