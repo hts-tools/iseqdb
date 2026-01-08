@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 # ISeqDb - Identify Sequences in Databases
-# version 0.0.5
+# version 0.0.6
 # main module
 # Nico Salmaso, FEM, nico.salmaso@fmach.it
+# This program is distributed under the GNU General Public License (GNU GPL v.3) https://www.gnu.org/licenses/
 
 import argparse
 import sys
@@ -14,7 +15,7 @@ from ISeqDb import find_seqs, inspect_db, create_db
 
 
 def main():
-    version_isdb = "0.0.5"
+    version_isdb = "0.0.6"
     description = ("ISeqDb v." + version_isdb)
 
     def check_path_file(filepathname):
@@ -27,6 +28,8 @@ def main():
     parser = argparse.ArgumentParser(prog='ISeqDb', description=description,
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      epilog=textwrap.dedent('''\
+                This program is distributed under the GNU General Public License (GNU GPL v.3) https://www.gnu.org/licenses/
+                
                 Author: Nico Salmaso (nico.salmaso@fmach.it)
                 
                 ISeqDb relies on BLAST®:
@@ -38,7 +41,7 @@ def main():
                 ---
                 ''')
                                      )
-    parser.add_argument('-v', '-V', '--version', action='version', version='%(prog)s 0.0.5')
+    parser.add_argument('-v', '-V', '--version', action='version', version='%(prog)s 0.0.6')
     subparsers = parser.add_subparsers(dest='command', title='commands',
                                        description='Available commands - Use "ISeqDb [command] --help"'
                                                    ' for more information about a command')
@@ -80,10 +83,10 @@ def main():
     parser_find_seqs.add_argument('-k', '--task', type=str, required=False, default="megablast",
                                   choices=['megablast', 'blastn', 'blastx'],
                                   help="Task: megablast (nucl), blastn (nucl), blastx (prot); default=megablast")
-    parser_find_seqs.add_argument('-m', '--maxtargseq', type=int, required=False, default=100,
-                                  help="Keep max target sequences >= maxtargseq; default=100")
+    parser_find_seqs.add_argument('-m', '--maxtargseq', type=int, required=False, default=50,
+                                  help="Keep max target sequences >= maxtargseq; default=50")
     parser_find_seqs.add_argument('-e', '--minevalue', type=float, required=False, default=1e-6,
-                                  help="Keep hits with evalue >= minevalue; default=1e-6")
+                                  help="Keep hits with evalue <= minevalue; default=1e-6")
     parser_find_seqs.add_argument('-p', '--minpident', type=int, required=False, default=85,
                                   help="Keep hits with pident >= minpident (only megablast/blastn); default=85")
     parser_find_seqs.add_argument('-t', '--threads', type=int, required=False, default=1,
@@ -91,9 +94,9 @@ def main():
     parser_find_seqs.add_argument('-s', '--sortoutput', type=str, required=False, default="bitscore",
                                   choices=['bitscore', 'pident', 'evalue', 'subject_seq_title'],
                                   help="Sort output by colname; default=bitscore")
-    parser_find_seqs.add_argument('-d', '--delimiter', type=str, required=False, default="comma",
+    parser_find_seqs.add_argument('-d', '--delimiter', type=str, required=False, default="tab",
                                   choices=['comma', 'semicolon', 'tab'],
-                                  help="Output delimiter: comma, semicolon, tab; default=comma")
+                                  help="Output delimiter: comma, semicolon, tab; default=tab")
     parser_find_seqs.set_defaults(func=find_seqs.run)
 
     # inspect_db

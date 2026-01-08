@@ -1,7 +1,8 @@
 # ISeqDb - Identify Sequences in Databases
-# version 0.0.5
+# version 0.0.6
 # module inspect_db
 # Nico Salmaso, FEM, nico.salmaso@fmach.it
+# This program is distributed under the GNU General Public License (GNU GPL v.3) https://www.gnu.org/licenses/
 
 import os
 import tarfile
@@ -35,6 +36,20 @@ def run(args):
     if len(file_name_db) == 0:
         print(" ")
         print("database.tar.gz name not indicated")
+        print(" ")
+        sys.exit(1)
+    if any(c in " ;&|$-" for c in dirtarget):
+        print(" ")
+        print(dirtarget)
+        print(" ")
+        print("Error: spaces or characters ;&|$- in dir names are not allowed")
+        print(" ")
+        sys.exit(1)
+    if any(c in " ;&|$-" for c in file_name_db):
+        print(" ")
+        print(file_name_db)
+        print(" ")
+        print("Error: spaces or characters ;&|$- in file names are not allowed")
         print(" ")
         sys.exit(1)
 

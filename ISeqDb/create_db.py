@@ -1,7 +1,8 @@
 # ISeqDb - Identify Sequences in Databases
-# version 0.0.5
+# version 0.0.6
 # module, create_db
 # Nico Salmaso, FEM, nico.salmaso@fmach.it
+# This program is distributed under the GNU General Public License (GNU GPL v.3) https://www.gnu.org/licenses/
 
 import os
 import sys
@@ -21,12 +22,26 @@ def run(args):
 
     if len(dirfasta) == 0:
         print(" ")
-        print("input directory not indicated")
+        print("input directory not indicated; full path should be indicated")
         print(" ")
         sys.exit(1)
     if len(file_name_fs) == 0:
         print(" ")
         print("fasta file name not indicated")
+        print(" ")
+        sys.exit(1)
+    if any(c in " ;&|$-" for c in dirfasta):
+        print(" ")
+        print(dirfasta)
+        print(" ")
+        print("Error: spaces or characters ;&|$- in dir names are not allowed")
+        print(" ")
+        sys.exit(1)
+    if any(c in " ;&|$-" for c in file_name_fs):
+        print(" ")
+        print(file_name_fs)
+        print(" ")
+        print("Error: spaces or characters ;&|$- in file names are not allowed")
         print(" ")
         sys.exit(1)
 

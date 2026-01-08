@@ -1,7 +1,8 @@
 # ISeqDb - Identify Sequences in Databases
-# version 0.0.5
+# version 0.0.6
 # module find_seqs
 # Nico Salmaso, FEM, nico.salmaso@fmach.it
+# This program is distributed under the GNU General Public License (GNU GPL v.3) https://www.gnu.org/licenses/
 
 import pandas as pd
 import os
@@ -23,6 +24,20 @@ def run(args):
         print("name query file not indicated")
         print(" ")
         sys.exit(1)
+    if any(c in " ;&|$-" for c in dirquery):
+        print(" ")
+        print(dirquery)
+        print(" ")
+        print("Error: spaces or characters ;&|$- in dir names are not allowed")
+        print(" ")
+        sys.exit(1)
+    if any(c in " ;&|$-" for c in file_query):
+        print(" ")
+        print(file_query)
+        print(" ")
+        print("Error: spaces or characters ;&|$- in file names are not allowed")
+        print(" ")
+        sys.exit(1)
 
     dirtarget, file_name_db = os.path.split(args.targetdb)
     if len(dirtarget) == 0:
@@ -35,6 +50,20 @@ def run(args):
         print("database.tar.gz name not indicated")
         print(" ")
         sys.exit(1)
+    if any(c in " ;&|$-" for c in dirtarget):
+        print(" ")
+        print(dirtarget)
+        print(" ")
+        print("Error: spaces or characters ;&|$- in dir names are not allowed")
+        print(" ")
+        sys.exit(1)
+    if any(c in " ;&|$-" for c in file_name_db):
+        print(" ")
+        print(file_name_db)
+        print(" ")
+        print("Error: spaces or characters ;&|$- in archive names are not allowed")
+        print(" ")
+        sys.exit(1)
 
     diroutput, file_name_ou_1 = os.path.split(args.outputfile)
     if len(diroutput) == 0:
@@ -44,7 +73,21 @@ def run(args):
         sys.exit(1)
     if len(file_name_ou_1) == 0:
         print(" ")
-        print("output name not indicated")
+        print("output file name not indicated")
+        print(" ")
+        sys.exit(1)
+    if any(c in " ;&|$-" for c in diroutput):
+        print(" ")
+        print(diroutput)
+        print(" ")
+        print("spaces or characters ;&|$- in dir names are not allowed")
+        print(" ")
+        sys.exit(1)
+    if any(c in " ;&|$-" for c in file_name_ou_1):
+        print(" ")
+        print(file_name_ou_1)
+        print(" ")
+        print("spaces or characters ;&|$- in file names are not allowed")
         print(" ")
         sys.exit(1)
 
@@ -173,11 +216,10 @@ def run(args):
             print("No matches between query and subject sequences")
             print('_____________________________________')
 
-    # Read the file into a DataFrame
-    dframe = pd.read_csv(file_header, delimiter='\t')
-    # Convert the dframe (list of lists)
+    # Read the file into a DataFrame; do not consider the first line in the form of header
+    dframe = pd.read_csv(file_header, delimiter='\t', header=None)
+    # Convert the dframe (list of lists) and add column names in the first row
     data = dframe.values.tolist()
-
     data.insert(0, column_names)
     dataf: DataFrame = pd.DataFrame(data)
     dataf.to_csv(output_file, sep='\t', index=False, header=False)
