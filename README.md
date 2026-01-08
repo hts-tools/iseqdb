@@ -14,35 +14,30 @@ Any other database of homologous sequences can be used. This includes, for examp
 
 ### Requirements
 
-python>=3.10, pandas, blast>=2.15, pip
+python>=3.10, pandas, blast=2.15, pip
 
 conda/mamba should be already installed (https://mamba.readthedocs.io/en/latest/)
 
 ### conda and pip
 
-- Install dependencies creating a conda environment (through conda or mamba)
+- Create the conda environment and install dependencies (through conda or mamba)
 
-*mamba create -y --name ISeqDb python>=3.10*
+*conda create -y -n ISeqDb -c conda-forge -c bioconda python pip blast=2.15*
 
-*mamba activate ISeqDb*
-
-*mamba install -y python>=3.10 pip*
-
-*mamba install -y bioconda::blast>=2.15.0*
+*conda activate ISeqDb*
 
 - Install ISeqDb from PyPI
 
 *pip install ISeqDb*
 
 
-
-###### Uninstalling
+### Uninstalling
 
 To uninstall, or before installing new versions:
 
-*mamba deactivate*
+*conda deactivate*
 
-*mamba env remove -y -n ISeqDb*
+*conda env remove -y -n ISeqDb*
 
 ### Databases
 
@@ -90,7 +85,7 @@ Task: megablast (nucl), blastn (nucl), blastx (prot); default=megablast
 -Keep max target sequences >= maxtargseq; default=100
 
 -e MINEVALUE, --minevalue MINEVALUE
-Keep hits with evalue >= minevalue; default=1e-6
+Keep hits with evalue <= minevalue; default=1e-6
 
 -p MINPIDENT, --minpident MINPIDENT
 Keep hits with pident >= minpident (only megablast/blastn); default=85
