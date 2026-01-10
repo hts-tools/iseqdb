@@ -33,7 +33,7 @@ All sequences were obtained from GenBank, and databases created using _ISeqDb cr
 
 ###### Genes for taxonomic classifications
 
-*rbcL_2601* (Bacillariophyta) [255-3476 bp]; 6792 sequences [January 2026]
+*rbcL_2601* (Bacillariophyta) [255-3476 bp]; 7687 sequences [January 2026]
 
 
 
