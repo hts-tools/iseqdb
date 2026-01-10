@@ -84,7 +84,7 @@ def main():
                                   choices=['megablast', 'blastn', 'blastx'],
                                   help="Task: megablast (nucl), blastn (nucl), blastx (prot); default=megablast")
     parser_find_seqs.add_argument('-m', '--maxtargseq', type=int, required=False, default=50,
-                                  help="Keep max target sequences >= maxtargseq; default=50")
+                                  help="Keep max target sequences <= maxtargseq; default=50")
     parser_find_seqs.add_argument('-e', '--minevalue', type=float, required=False, default=1e-6,
                                   help="Keep hits with evalue <= minevalue; default=1e-6")
     parser_find_seqs.add_argument('-p', '--minpident', type=int, required=False, default=85,
